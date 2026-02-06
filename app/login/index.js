@@ -2,12 +2,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import api from "../services/api";
@@ -56,7 +56,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const response = await api.post("/api/auth/login", {
+      const response = await api.post("/auth/login", {
         email: email.trim().toLowerCase(),
         password,
       });
@@ -72,6 +72,7 @@ export default function LoginPage() {
 
       router.replace("/(tabs)");
     } catch (error) {
+      console.log("Login error:", error);
       const message =
         error?.response?.data?.message ||
         error?.message ||
