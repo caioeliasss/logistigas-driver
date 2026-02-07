@@ -176,7 +176,7 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-slate-900 p-6">
-      <Text className="text-white text-2xl font-bold mb-2">
+      <Text className="text-white text-2xl font-bold mb-2 mt-10">
         Localização em background
       </Text>
       <Text className="text-slate-300 mb-6">
