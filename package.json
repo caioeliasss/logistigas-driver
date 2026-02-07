@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build": "cd android && gradlew.bat assembleRelease",
-    "build:dev": "eas build --profile development --platform android"
+    "build:dev": "eas build --profile development --platform android",
+    "build:preview": "eas build --profile preview --platform android"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -33,6 +34,7 @@
     "expo-symbols": "~1.0.8",
     "expo-system-ui": "~6.0.9",
     "expo-task-manager": "~14.0.9",
+    "expo-updates": "~29.0.16",
     "expo-web-browser": "~15.0.10",
     "nativewind": "^4.2.1",
     "prettier-plugin-tailwindcss": "^0.5.14",

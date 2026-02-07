@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 import * as Location from "expo-location";
+import { useRouter } from "expo-router";
 import * as TaskManager from "expo-task-manager";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Switch, Text, View } from "react-native";
+import { Alert, Platform, Switch, Text, View } from "react-native";
+import api from "../services/api";
 
 const BACKGROUND_LOCATION_TASK = "background-location-task";
 const LAST_SENT_KEY = "last-location-sent-at";
@@ -18,6 +19,15 @@ if (!TaskManager.isTaskDefined(BACKGROUND_LOCATION_TASK)) {
     const taskData = data;
     const latest = taskData?.locations?.[0];
     if (latest) {
+      try {
+        await api.patch("/users/drivers/coordinates", {
+          lat: latest.coords.latitude,
+          lng: latest.coords.longitude,
+        });
+      } catch (sendError) {
+        console.error("Failed to send location (bg):", sendError);
+      }
+
       await AsyncStorage.setItem(
         LAST_SENT_KEY,
         new Date(latest.timestamp).toISOString(),
@@ -93,21 +103,52 @@ export default function HomeScreen() {
   }, []);
 
   const enableBackgroundLocation = useCallback(async () => {
+    if (Platform.OS === "web") {
+      Alert.alert(
+        "Não suportado",
+        "Localização em background não está disponível na web.",
+      );
+      return;
+    }
+
     const allowed = await requestPermissions();
     if (!allowed) return;
 
-    await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_TASK, {
+    const locationOptions = {
       accuracy: Location.Accuracy.Balanced,
-      timeInterval: 60000,
+      timeInterval: 60000, // 1 minuto
       distanceInterval: 50,
-      showsBackgroundLocationIndicator: true,
       pausesUpdatesAutomatically: false,
-      foregroundService: {
+    };
+
+    if (Platform.OS === "android") {
+      locationOptions.foregroundService = {
         notificationTitle: "Localização ativa",
         notificationBody: "Enviando localização em segundo plano.",
         notificationColor: "#1D4ED8",
-      },
-    });
+      };
+    } else {
+      locationOptions.showsBackgroundLocationIndicator = true;
+    }
+
+    await Location.startLocationUpdatesAsync(
+      BACKGROUND_LOCATION_TASK,
+      locationOptions,
+    );
+
+    // try {
+    //   const position = await Location.getCurrentPositionAsync({
+    //     accuracy: Location.Accuracy.Balanced,
+    //   });
+    //   const response = await api.patch("/users/drivers/coordinates", {
+    //     lat: position.coords.latitude,
+    //     lng: position.coords.longitude,
+    //   });
+    //   console.log("Location sent:", response.data);
+    //   await AsyncStorage.setItem(LAST_SENT_KEY, new Date().toISOString());
+    // } catch (error) {
+    //   console.error("Failed to send location:", error);
+    // }
 
     await refreshStatus();
   }, [refreshStatus, requestPermissions]);
