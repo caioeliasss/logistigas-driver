@@ -175,8 +175,8 @@ export default function HomeScreen() {
   );
 
   return (
-    <View className="flex-1 bg-slate-900 p-6">
-      <Text className="text-white text-2xl font-bold mb-2 mt-10">
+    <View className="flex-1 bg-slate-900 p-6 pt-12">
+      <Text className="text-white text-2xl font-bold mb-2">
         Localização em background
       </Text>
       <Text className="text-slate-300 mb-6">
@@ -207,6 +207,7 @@ export default function HomeScreen() {
           <Switch value={isEnabled} onValueChange={handleToggle} />
         </View>
       </View>
+      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.1</Text>
     </View>
   );
 }
