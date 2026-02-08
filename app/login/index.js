@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -84,55 +87,67 @@ export default function LoginPage() {
   }, [email, password, router]);
 
   return (
-    <View className="flex-1 bg-slate-900 px-6 justify-center">
-      <View className="bg-slate-950 rounded-2xl p-6 space-y-4">
-        <View>
-          <Text className="text-white text-2xl font-bold">Bem-vindo</Text>
-          <Text className="text-slate-300">Acesse com seu email e senha.</Text>
-        </View>
+    <KeyboardAvoidingView
+      className="flex-1 bg-slate-900"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="px-6">
+          <View className="bg-slate-950 rounded-2xl p-6 space-y-4">
+            <View>
+              <Text className="text-white text-2xl font-bold">Bem-vindo</Text>
+              <Text className="text-slate-300">
+                Acesse com seu email e senha.
+              </Text>
+            </View>
 
-        <View className="space-y-3">
-          <View>
-            <Text className="text-slate-200 mb-2">Email</Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="email@exemplo.com"
-              placeholderTextColor="#64748B"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              className="bg-slate-900 text-white px-4 py-3 rounded-xl"
-            />
+            <View className="space-y-3">
+              <View>
+                <Text className="text-slate-200 mb-2">Email</Text>
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="email@exemplo.com"
+                  placeholderTextColor="#64748B"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  className="bg-slate-900 text-white px-4 py-3 rounded-xl"
+                />
+              </View>
+
+              <View>
+                <Text className="text-slate-200 mb-2">Senha</Text>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="********"
+                  placeholderTextColor="#64748B"
+                  secureTextEntry
+                  className="bg-slate-900 text-white px-4 py-3 rounded-xl"
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={handleLogin}
+              disabled={!canSubmit}
+              className={`rounded-xl py-3 mt-3 items-center ${
+                canSubmit ? "bg-blue-600" : "bg-slate-700"
+              }`}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text className="text-white font-semibold">Entrar</Text>
+              )}
+            </TouchableOpacity>
           </View>
-
-          <View>
-            <Text className="text-slate-200 mb-2">Senha</Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="********"
-              placeholderTextColor="#64748B"
-              secureTextEntry
-              className="bg-slate-900 text-white px-4 py-3 rounded-xl"
-            />
-          </View>
         </View>
-
-        <TouchableOpacity
-          onPress={handleLogin}
-          disabled={!canSubmit}
-          className={`rounded-xl py-3 items-center ${
-            canSubmit ? "bg-blue-600" : "bg-slate-700"
-          }`}
-        >
-          {loading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text className="text-white font-semibold">Entrar</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
