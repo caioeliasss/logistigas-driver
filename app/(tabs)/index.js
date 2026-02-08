@@ -207,7 +207,7 @@ export default function HomeScreen() {
           <Switch value={isEnabled} onValueChange={handleToggle} />
         </View>
       </View>
-      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.3</Text>
+      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.4</Text>
     </View>
   );
 }
