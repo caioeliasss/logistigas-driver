@@ -117,7 +117,7 @@ export default function HomeScreen() {
     const locationOptions = {
       accuracy: Location.Accuracy.Balanced,
       timeInterval: 60000, // 1 minuto
-      distanceInterval: 50,
+      distanceInterval: 5, // por enquanto 5m (pode ser ajustado depois)
       pausesUpdatesAutomatically: false,
     };
 
@@ -207,7 +207,7 @@ export default function HomeScreen() {
           <Switch value={isEnabled} onValueChange={handleToggle} />
         </View>
       </View>
-      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.1</Text>
+      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.2</Text>
     </View>
   );
 }
