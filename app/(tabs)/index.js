@@ -117,7 +117,7 @@ export default function HomeScreen() {
     const locationOptions = {
       accuracy: Location.Accuracy.Balanced,
       timeInterval: 60000, // 1 minuto
-      distanceInterval: 5, // por enquanto 5m (pode ser ajustado depois)
+      distanceInterval: 100, // por enquanto 100m
       pausesUpdatesAutomatically: false,
     };
 
