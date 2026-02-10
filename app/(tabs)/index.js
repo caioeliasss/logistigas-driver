@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import * as TaskManager from "expo-task-manager";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Platform, Switch, Text, View } from "react-native";
 import api from "../services/api";
 
@@ -47,6 +47,56 @@ export default function HomeScreen() {
   const router = useRouter();
   const [isEnabled, setIsEnabled] = useState(false);
   const [lastSentAt, setLastSentAt] = useState(null);
+  const [pedidos, setPedidos] = useState([]);
+
+  React.useEffect(() => {
+    const fetchPedidos = async () => {
+      try {
+        const response = await api.get("/orders/driver/");
+        setPedidos(response.data);
+      } catch (error) {
+        console.error("Failed to fetch pedidos:", error);
+      }
+    };
+
+    fetchPedidos();
+  }, []);
+
+  const handleStatusChange = useCallback(
+    async (pedidoId) => {
+      try {
+        const pedido = pedidos.find((p) => p.id === pedidoId);
+        if (!pedido) return;
+
+        const newStatus =
+          pedido.status === "pendente" ? "carregando" : "descarregando";
+
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+
+        const pos = {
+          lat: location.coords.latitude,
+          lng: location.coords.longitude,
+        };
+
+        await api.patch(`/orders/${pedidoId}/driver-status`, {
+          status: newStatus,
+          pos,
+        });
+
+        setPedidos((prev) =>
+          prev.map((p) =>
+            p.id === pedidoId ? { ...p, status: newStatus } : p,
+          ),
+        );
+      } catch (error) {
+        console.error("Failed to change status:", error);
+        Alert.alert("Erro", "Não foi possível atualizar o status do pedido.");
+      }
+    },
+    [pedidos],
+  );
 
   const refreshStatus = useCallback(async () => {
     const started = await Location.hasStartedLocationUpdatesAsync(
@@ -177,7 +227,7 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-slate-900 p-6 pt-24">
       <Text className="text-white text-2xl font-bold mb-2">
-        Localização em background
+        Localizador de Motoristas
       </Text>
       <Text className="text-slate-300 mb-6">
         Ative ou desative o envio da localização.
@@ -207,7 +257,58 @@ export default function HomeScreen() {
           <Switch value={isEnabled} onValueChange={handleToggle} />
         </View>
       </View>
-      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.4</Text>
+
+      <View>
+        <Text className="text-slate-300 mt-6">Proximos pedidos</Text>
+        <View>
+          {pedidos.map((pedido) => (
+            <View
+              key={pedido.id}
+              className="bg-slate-950 rounded-2xl p-4 mt-4 border border-slate-800"
+            >
+              <View className="flex-row items-center justify-between">
+                <Text className="text-white font-semibold text-base">
+                  {pedido.distribuidora?.nome}
+                </Text>
+                <Text
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    pedido.status === "pendente"
+                      ? "bg-amber-500/20 text-amber-300"
+                      : "bg-emerald-500/20 text-emerald-300"
+                  }`}
+                >
+                  {pedido.status === "pendente" ? "Pendente" : "Em andamento"}
+                </Text>
+              </View>
+
+              <View className="mt-3 flex-row items-center justify-between">
+                <View>
+                  <Text className="text-slate-500 text-xs">Quantidade</Text>
+                  <Text className="text-slate-200 font-medium">
+                    {pedido.quantidade}
+                  </Text>
+                </View>
+                <View className="items-end">
+                  <Text className="text-slate-500 text-xs">Combustivel</Text>
+                  <Text className="text-slate-200 font-medium">
+                    {pedido.tanque?.combustivel}
+                  </Text>
+                </View>
+              </View>
+
+              <View className="mt-4">
+                <Button onClick={() => handleStatusChange(pedido.id)}>
+                  {pedido.status === "pendente"
+                    ? "Iniciar carregamento"
+                    : "Iniciar descarregamento"}
+                </Button>
+              </View>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.5</Text>
     </View>
   );
 }
