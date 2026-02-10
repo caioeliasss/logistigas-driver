@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 
+import { startTracking } from "../index";
 import api from "../services/api";
 
 const AUTH_TOKEN_KEY = "auth-token";
@@ -31,6 +32,7 @@ export default function LoginPage() {
       const token = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
       if (token) {
         api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        await startTracking();
         router.replace("/(tabs)");
       }
     };
@@ -72,6 +74,9 @@ export default function LoginPage() {
       await AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
       await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(user ?? {}));
       api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+      // Iniciar rastreamento nativo em background (Android)
+      await startTracking();
 
       router.replace("/(tabs)");
     } catch (error) {
