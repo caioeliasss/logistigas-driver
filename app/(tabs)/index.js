@@ -331,6 +331,15 @@ export default function HomeScreen() {
                   </Text>
                 </View>
                 <View className="items-end">
+                  <Text className="text-slate-500 text-xs">Posto</Text>
+                  <Text className="text-slate-200 font-medium">
+                    {pedido.tanque?.posto?.nome || "N/A"}
+                  </Text>
+
+                  <Text className="text-slate-500 text-xs">Cidade</Text>
+                  <Text className="text-slate-200 font-medium">
+                    {pedido.tanque?.posto?.localizacao || "N/A"}
+                  </Text>
                   <Text className="text-slate-500 text-xs">Combustivel</Text>
                   <Text className="text-slate-200 font-medium">
                     {pedido.tanque?.combustivel}
