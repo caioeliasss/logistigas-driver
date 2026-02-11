@@ -51,6 +51,7 @@ export default function HomeScreen() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [lastSentAt, setLastSentAt] = useState(null);
   const [pedidos, setPedidos] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   React.useEffect(() => {
     const fetchPedidos = async () => {
@@ -73,7 +74,8 @@ export default function HomeScreen() {
   const handleStatusChange = useCallback(
     async (pedidoId) => {
       try {
-        const pedido = pedidos.find((p) => p.id === pedidoId);
+        setRefreshing(true);
+        const pedido = pedidos.find((p) => p._id === pedidoId);
         if (!pedido) return;
 
         const newStatus =
@@ -95,12 +97,14 @@ export default function HomeScreen() {
 
         setPedidos((prev) =>
           prev.map((p) =>
-            p.id === pedidoId ? { ...p, status: newStatus } : p,
+            p._id === pedidoId ? { ...p, status: newStatus } : p,
           ),
         );
       } catch (error) {
         console.error("Failed to change status:", error);
         Alert.alert("Erro", "Não foi possível atualizar o status do pedido.");
+      } finally {
+        setRefreshing(false);
       }
     },
     [pedidos],
@@ -237,6 +241,14 @@ export default function HomeScreen() {
     [disableBackgroundLocation, enableBackgroundLocation],
   );
 
+  if (refreshing) {
+    return (
+      <View className="flex-1 items-center justify-center bg-slate-900">
+        <Text className="text-white text-lg">Atualizando...</Text>
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-slate-900 p-6 pt-24">
       <Text className="text-white text-2xl font-bold mb-2">
@@ -281,7 +293,7 @@ export default function HomeScreen() {
           ) : null}
           {pedidos.map((pedido) => (
             <View
-              key={pedido.id}
+              key={pedido._id}
               className="bg-slate-950 rounded-2xl p-4 mt-4 border border-slate-800"
             >
               <View className="flex-row items-center justify-between">
@@ -301,6 +313,18 @@ export default function HomeScreen() {
 
               <View className="mt-3 flex-row items-center justify-between">
                 <View>
+                  <Text className="text-slate-500 text-xs">
+                    Data de Carregamento
+                  </Text>
+                  <Text className="text-slate-200 font-medium">
+                    {pedido.dataEntrega
+                      ? pedido.dataEntrega
+                          .split("T")[0]
+                          .split("-")
+                          .reverse()
+                          .join("/")
+                      : "N/A"}
+                  </Text>
                   <Text className="text-slate-500 text-xs">Quantidade</Text>
                   <Text className="text-slate-200 font-medium">
                     {pedido.quantidade}
@@ -321,7 +345,7 @@ export default function HomeScreen() {
                       ? "Iniciar carregamento"
                       : "Iniciar descarregamento"
                   }
-                  onPress={() => handleStatusChange(pedido.id)}
+                  onPress={() => handleStatusChange(pedido._id)}
                 />
               </View>
             </View>
@@ -334,7 +358,7 @@ export default function HomeScreen() {
       </View>
 
       <Text className="text-slate-400 text-sm mt-4 text-center">
-        Versão: 1.0.8
+        Versão: 1.0.9
       </Text>
     </View>
   );
