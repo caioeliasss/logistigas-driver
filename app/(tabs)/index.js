@@ -3,7 +3,7 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import * as TaskManager from "expo-task-manager";
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Platform, Switch, Text, View } from "react-native";
+import { Alert, Button, Platform, Switch, Text, View } from "react-native";
 import api from "../services/api";
 
 const BACKGROUND_LOCATION_TASK = "background-location-task";
@@ -20,10 +20,13 @@ if (!TaskManager.isTaskDefined(BACKGROUND_LOCATION_TASK)) {
     const latest = taskData?.locations?.[0];
     if (latest) {
       try {
-        await api.patch("/users/drivers/coordinates", {
+        const response = await api.patch("/users/drivers/coordinates", {
           lat: latest.coords.latitude,
           lng: latest.coords.longitude,
         });
+        if (response.status === 401) {
+          console.warn("Unauthorized background request");
+        }
       } catch (sendError) {
         console.error("Failed to send location (bg):", sendError);
       }
@@ -307,18 +310,27 @@ export default function HomeScreen() {
               </View>
 
               <View className="mt-4">
-                <Button onClick={() => handleStatusChange(pedido.id)}>
-                  {pedido.status === "pendente"
-                    ? "Iniciar carregamento"
-                    : "Iniciar descarregamento"}
-                </Button>
+                <Button
+                  title={
+                    pedido.status === "pendente"
+                      ? "Iniciar carregamento"
+                      : "Iniciar descarregamento"
+                  }
+                  onPress={() => handleStatusChange(pedido.id)}
+                />
               </View>
             </View>
           ))}
         </View>
       </View>
 
-      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.6</Text>
+      <View className="mt-6">
+        <Button title="Sair" onPress={() => router.replace("/login")} />
+      </View>
+
+      <Text className="text-slate-400 text-sm mt-4 text-center">
+        Versão: 1.0.7
+      </Text>
     </View>
   );
 }
