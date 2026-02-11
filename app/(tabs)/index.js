@@ -52,14 +52,19 @@ export default function HomeScreen() {
   React.useEffect(() => {
     const fetchPedidos = async () => {
       try {
-        const response = await api.get("/orders/driver/");
+        const response = await api.get("/orders/driver");
         setPedidos(response.data);
       } catch (error) {
         console.error("Failed to fetch pedidos:", error);
       }
     };
 
-    fetchPedidos();
+    // fetchPedidos();
+    const interval = setInterval(() => {
+      void fetchPedidos();
+    }, 30000); // Atualiza a cada 30 segundos
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleStatusChange = useCallback(
@@ -261,6 +266,11 @@ export default function HomeScreen() {
       <View>
         <Text className="text-slate-300 mt-6">Proximos pedidos</Text>
         <View>
+          {pedidos.length === 0 ? (
+            <Text className="text-slate-500 mt-4">
+              Nenhum pedido encontrado.
+            </Text>
+          ) : null}
           {pedidos.map((pedido) => (
             <View
               key={pedido.id}

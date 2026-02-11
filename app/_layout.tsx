@@ -8,7 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import "../global.css";
 import { AuthRefresh } from "./services/AuthRefresh";
-
+import CheckUpdates from "./services/CheckUpdates";
 export const unstable_settings = {
   anchor: "(tabs)",
 };
@@ -20,6 +20,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
       <AuthRefresh />
+      <CheckUpdates />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
