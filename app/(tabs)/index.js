@@ -211,6 +211,11 @@ export default function HomeScreen() {
     await refreshStatus();
   }, [refreshStatus, requestPermissions]);
 
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+    router.replace("/login");
+  };
+
   const disableBackgroundLocation = useCallback(async () => {
     const started = await Location.hasStartedLocationUpdatesAsync(
       BACKGROUND_LOCATION_TASK,
@@ -325,11 +330,11 @@ export default function HomeScreen() {
       </View>
 
       <View className="mt-6">
-        <Button title="Sair" onPress={() => router.replace("/login")} />
+        <Button title="Sair" onPress={() => handleLogout()} />
       </View>
 
       <Text className="text-slate-400 text-sm mt-4 text-center">
-        Versão: 1.0.7
+        Versão: 1.0.8
       </Text>
     </View>
   );
