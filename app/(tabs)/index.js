@@ -308,7 +308,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.5</Text>
+      <Text className="text-slate-400 text-sm mt-4">Versão: 1.0.6</Text>
     </View>
   );
 }

@@ -73,6 +73,7 @@ export default function LoginPage() {
 
       await AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
       await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(user ?? {}));
+      await AsyncStorage.setItem("refresh-token", response.data.refreshToken);
       api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
       // Iniciar rastreamento nativo em background (Android)
