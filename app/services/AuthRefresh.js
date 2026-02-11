@@ -1,6 +1,6 @@
-import api from "@/services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
+const api = require("./api").default;
 
 export function AuthRefresh() {
   useEffect(() => {
