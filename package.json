@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build": "cd android && gradlew.bat assembleRelease",
+    "build:dev:r": "cd android && gradlew.bat assembleDebug",
     "build:dev": "eas build --profile development --platform android",
     "build:preview": "eas build --profile preview --platform android"
   },

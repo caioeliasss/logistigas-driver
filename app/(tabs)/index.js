@@ -2,7 +2,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Button, Platform, Switch, Text, View } from "react-native";
+import {
+  Alert,
+  Button,
+  PermissionsAndroid,
+  Platform,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import api from "../services/api";
 import foregroundService from "../services/foregroundService";
 
@@ -98,6 +106,24 @@ export default function HomeScreen() {
     return () => clearInterval(timer);
   }, [refreshStatus]);
 
+  const requestNotificationPermission = useCallback(async () => {
+    if (Platform.OS !== "android") return true;
+    if (Number(Platform.Version) < 33) return true;
+
+    const status = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+    if (status !== PermissionsAndroid.RESULTS.GRANTED) {
+      Alert.alert(
+        "Permissão negada",
+        "Ative as notificações para continuar.",
+      );
+      return false;
+    }
+
+    return true;
+  }, []);
+
   const requestPermissions = useCallback(async () => {
     const foreground = await Location.requestForegroundPermissionsAsync();
     if (foreground.status !== "granted") {
@@ -117,8 +143,11 @@ export default function HomeScreen() {
       return false;
     }
 
+    const notificationsAllowed = await requestNotificationPermission();
+    if (!notificationsAllowed) return false;
+
     return true;
-  }, []);
+  }, [requestNotificationPermission]);
 
   const enableBackgroundLocation = useCallback(async () => {
     if (Platform.OS === "web") {
