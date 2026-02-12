@@ -63,7 +63,7 @@ export default function HomeScreen() {
       }
     };
 
-    // fetchPedidos();
+    fetchPedidos();
     const interval = setInterval(() => {
       void fetchPedidos();
     }, 30000); // Atualiza a cada 30 segundos
