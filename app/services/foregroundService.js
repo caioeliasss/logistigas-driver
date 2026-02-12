@@ -66,6 +66,7 @@ const options = {
 // await BackgroundService.stop();
 
 const foregroundService = {
+  isRunning: () => BackgroundService.isRunning(),
   start: async () => {
     if (BackgroundService.isRunning()) {
       return;
