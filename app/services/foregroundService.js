@@ -17,38 +17,40 @@ const veryIntensiveTask = async (taskDataArguments) => {
   }
   // console.log("ForegroundService: background task started");
   // Example of an infinite loop task
-  while (BackgroundService.isRunning()) {
-    // console.log("Runned in background");
-    try {
-      const location = await Location.getCurrentPositionAsync({});
-      const response = await api.patch("/users/drivers/coordinates", {
-        lat: location.coords.latitude,
-        lng: location.coords.longitude,
-      });
-      if (response.status === 200 && BackgroundService.isRunning()) {
-        BackgroundService.updateNotification({
-          taskTitle: "Localização ativa",
-          taskDesc:
-            "Sincronizado. (Ùltima atualização: " +
-            new Date().toLocaleTimeString() +
-            ")",
+  await new Promise(async (resolve) => {
+    while (BackgroundService.isRunning()) {
+      // console.log("Runned in background");
+      try {
+        const location = await Location.getCurrentPositionAsync({});
+        const response = await api.patch("/users/drivers/coordinates", {
+          lat: location.coords.latitude,
+          lng: location.coords.longitude,
         });
+        if (response.status === 200 && BackgroundService.isRunning()) {
+          BackgroundService.updateNotification({
+            taskTitle: "Localização ativa",
+            taskDesc:
+              "Sincronizado. (Ùltima atualização: " +
+              new Date().toLocaleTimeString() +
+              ")",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        if (BackgroundService.isRunning()) {
+          BackgroundService.updateNotification({
+            taskTitle: "Localização inativa",
+            taskDesc:
+              "Erro ao sincronizar. (Última tentativa: " +
+              new Date().toLocaleTimeString() +
+              ")",
+          });
+        }
       }
-    } catch (error) {
-      console.log(error);
-      if (BackgroundService.isRunning()) {
-        BackgroundService.updateNotification({
-          taskTitle: "Localização inativa",
-          taskDesc:
-            "Erro ao sincronizar. (Última tentativa: " +
-            new Date().toLocaleTimeString() +
-            ")",
-        });
-      }
-    }
 
-    await sleep(taskDataArguments.delay);
-  }
+      await sleep(taskDataArguments.delay);
+    }
+  });
   // console.log("ForegroundService: background task stopped");
 };
 const options = {

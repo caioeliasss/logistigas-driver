@@ -8,7 +8,7 @@ import {
   PermissionsAndroid,
   Platform,
   Text,
-  View
+  View,
 } from "react-native";
 import api from "../services/api";
 import foregroundService from "../services/foregroundService";
@@ -193,12 +193,12 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-slate-900 p-6 pt-24">
-      <Text className="text-white text-2xl font-bold mb-2">
+      {/* <Text className="text-white text-2xl font-bold mb-2">
         Localizador de Motoristas
       </Text>
       <Text className="text-slate-300 mb-6">
         Ative ou desative o envio da localização.
-      </Text>
+      </Text> */}
 
       {/* <View className="bg-slate-950 rounded-2xl p-5 space-y-4">
         <View className="flex-row items-center justify-between">
@@ -301,7 +301,7 @@ export default function HomeScreen() {
       </View>
 
       <Text className="text-slate-400 text-sm mt-4 text-center">
-        Versão: 1.1.0
+        Versão: 1.1.3
       </Text>
     </View>
   );
