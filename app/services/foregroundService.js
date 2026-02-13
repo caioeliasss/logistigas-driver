@@ -10,40 +10,46 @@ const sleep = (time) =>
 // React Native will go into "paused" mode (unless there are other tasks running,
 // or there is a foreground app).
 const veryIntensiveTask = async (taskDataArguments) => {
+  const permissions = await Location.requestBackgroundPermissionsAsync();
+  if (!permissions.granted) {
+    console.log("ForegroundService: background permission not granted");
+    return;
+  }
+  // console.log("ForegroundService: background task started");
   // Example of an infinite loop task
   while (BackgroundService.isRunning()) {
-    console.log("Runned in background");
+    // console.log("Runned in background");
     try {
-      const status = await Location.requestForegroundPermissionsAsync();
-      if (status.granted) {
-        const location = await Location.getCurrentPositionAsync({});
-        const response = await api.patch("/users/drivers/coordinates", {
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
+      const location = await Location.getCurrentPositionAsync({});
+      const response = await api.patch("/users/drivers/coordinates", {
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+      if (response.status === 200 && BackgroundService.isRunning()) {
+        BackgroundService.updateNotification({
+          taskTitle: "Localização ativa",
+          taskDesc:
+            "Sincronizado. (Ùltima atualização: " +
+            new Date().toLocaleTimeString() +
+            ")",
         });
-        if (response.status === 200) {
-          BackgroundService.updateNotification({
-            taskTitle: "Localização ativa",
-            taskDesc:
-              "Sincronizado. (Ùltima atualização: " +
-              new Date().toLocaleTimeString() +
-              ")",
-          });
-        }
       }
     } catch (error) {
       console.log(error);
-      BackgroundService.updateNotification({
-        taskTitle: "Localização inativa",
-        taskDesc:
-          "Erro ao sincronizar. (Última tentativa: " +
-          new Date().toLocaleTimeString() +
-          ")",
-      });
+      if (BackgroundService.isRunning()) {
+        BackgroundService.updateNotification({
+          taskTitle: "Localização inativa",
+          taskDesc:
+            "Erro ao sincronizar. (Última tentativa: " +
+            new Date().toLocaleTimeString() +
+            ")",
+        });
+      }
     }
 
     await sleep(taskDataArguments.delay);
   }
+  // console.log("ForegroundService: background task stopped");
 };
 const options = {
   taskName: "Localizador",
@@ -54,7 +60,7 @@ const options = {
   color: "#ffffff",
   //   linkingURI: "yourSchemeHere://chat/jane", // See Deep Linking for more info
   parameters: {
-    delay: 60000,
+    delay: 30000,
   },
 };
 

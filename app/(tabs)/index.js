@@ -7,9 +7,8 @@ import {
   Button,
   PermissionsAndroid,
   Platform,
-  Switch,
   Text,
-  View,
+  View
 } from "react-native";
 import api from "../services/api";
 import foregroundService from "../services/foregroundService";
@@ -114,10 +113,7 @@ export default function HomeScreen() {
       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
     );
     if (status !== PermissionsAndroid.RESULTS.GRANTED) {
-      Alert.alert(
-        "Permissão negada",
-        "Ative as notificações para continuar.",
-      );
+      Alert.alert("Permissão negada", "Ative as notificações para continuar.");
       return false;
     }
 
@@ -204,7 +200,7 @@ export default function HomeScreen() {
         Ative ou desative o envio da localização.
       </Text>
 
-      <View className="bg-slate-950 rounded-2xl p-5 space-y-4">
+      {/* <View className="bg-slate-950 rounded-2xl p-5 space-y-4">
         <View className="flex-row items-center justify-between">
           <Text className="text-slate-200 text-base font-medium">Status</Text>
           <Text
@@ -219,7 +215,7 @@ export default function HomeScreen() {
           <Text className="text-slate-200 text-base font-medium">Ativar</Text>
           <Switch value={isEnabled} onValueChange={handleToggle} />
         </View>
-      </View>
+      </View> */}
 
       <View>
         <Text className="text-slate-300 mt-6">Proximos pedidos</Text>
