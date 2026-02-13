@@ -20,6 +20,7 @@ export default function HomeScreen() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [pedidos, setPedidos] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [permissionsGranted, setPermissionsGranted] = useState(false);
 
   React.useEffect(() => {
     const fetchPedidos = async () => {
@@ -31,6 +32,7 @@ export default function HomeScreen() {
       }
     };
 
+    requestPermissions();
     fetchPedidos();
     const interval = setInterval(() => {
       void fetchPedidos();
@@ -47,7 +49,7 @@ export default function HomeScreen() {
         if (!pedido) return;
 
         const newStatus =
-          pedido.status === "pendente" ? "carregando" : "descarregando";
+          pedido.status === "pendente" ? "carregado" : "descarregando";
 
         const location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
@@ -142,6 +144,7 @@ export default function HomeScreen() {
     const notificationsAllowed = await requestNotificationPermission();
     if (!notificationsAllowed) return false;
 
+    setPermissionsGranted(true);
     return true;
   }, [requestNotificationPermission]);
 
@@ -169,6 +172,7 @@ export default function HomeScreen() {
 
   const disableBackgroundLocation = useCallback(async () => {
     await foregroundService.stop();
+    // setPermissionsGranted(false);
     await refreshStatus();
   }, [refreshStatus]);
 
@@ -193,6 +197,24 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-slate-900 p-6 pt-24">
+      <View className="bg-slate-950 rounded-2xl p-6 space-y-4">
+        <Text className="text-white text-2xl font-bold">Bem-vindo</Text>
+        {permissionsGranted ? (
+          <Text className="text-slate-300 pt-4 pb-4">
+            Todas as permissões estão ativadas.
+          </Text>
+        ) : (
+          <Text className="text-slate-300 pt-4 pb-4">
+            Ative todas as permissões para rastreamento.
+          </Text>
+        )}
+        {permissionsGranted ? null : (
+          <Button
+            onPress={enableBackgroundLocation}
+            title="Ativar Permissões"
+          ></Button>
+        )}
+      </View>
       {/* <Text className="text-white text-2xl font-bold mb-2">
         Localizador de Motoristas
       </Text>
@@ -217,8 +239,8 @@ export default function HomeScreen() {
         </View>
       </View> */}
 
-      <View>
-        <Text className="text-slate-300 mt-6">Proximos pedidos</Text>
+      <View className="p-4">
+        <Text className="text-slate-300 mt-6 text-2xl">Proximos pedidos</Text>
         <View>
           {pedidos.length === 0 ? (
             <Text className="text-slate-500 mt-4">
@@ -241,7 +263,11 @@ export default function HomeScreen() {
                       : "bg-emerald-500/20 text-emerald-300"
                   }`}
                 >
-                  {pedido.status === "pendente" ? "Pendente" : "Em andamento"}
+                  {pedido.status === "pendente"
+                    ? "Pendente"
+                    : pedido.status === "carregado"
+                      ? "Carregando"
+                      : "Descarregando"}
                 </Text>
               </View>
 
