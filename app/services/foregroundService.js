@@ -10,11 +10,6 @@ const sleep = (time) =>
 // React Native will go into "paused" mode (unless there are other tasks running,
 // or there is a foreground app).
 const veryIntensiveTask = async (taskDataArguments) => {
-  const permissions = await Location.requestBackgroundPermissionsAsync();
-  if (!permissions.granted) {
-    console.log("ForegroundService: background permission not granted");
-    return;
-  }
   // console.log("ForegroundService: background task started");
   // Example of an infinite loop task
   await new Promise(async (resolve) => {

@@ -1,10 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  PermissionsAndroid,
   Platform,
   ScrollView,
   Text,
@@ -12,8 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { startTracking } from "../index";
 import api from "../services/api";
 
 const AUTH_TOKEN_KEY = "auth-token";
@@ -28,17 +28,53 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const checkSession = async () => {
-      const token = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
-      if (token) {
-        api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        await startTracking();
-        router.replace("/(tabs)");
+    const requestPermissions = async () => {
+      try {
+        const foreground = await Location.requestForegroundPermissionsAsync();
+        if (foreground.status !== "granted") {
+          Alert.alert(
+            "Permissão negada",
+            "É necessário permitir localização para continuar.",
+          );
+          return;
+        }
+
+        const background = await Location.requestBackgroundPermissionsAsync();
+        if (background.status !== "granted") {
+          Alert.alert(
+            "Permissão em background negada",
+            "Ative a permissão de localização em background nas configurações do sistema.",
+          );
+          return;
+        }
+
+        if (Platform.OS === "android" && Platform.Version >= 33) {
+          const status = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            {
+              title: "Permissão de Notificações",
+              message:
+                "Este aplicativo precisa de permissão para enviar notificações para mantê-lo informado sobre o status do rastreamento de localização.",
+              buttonNeutral: "Pergunte-me depois",
+              buttonNegative: "Cancelar",
+              buttonPositive: "OK",
+            },
+          );
+
+          if (status !== PermissionsAndroid.RESULTS.GRANTED) {
+            Alert.alert(
+              "Permissão negada",
+              "Ative as notificações para continuar.",
+            );
+          }
+        }
+      } catch (error) {
+        console.log("Permission request error:", error);
       }
     };
 
-    void checkSession();
-  }, [router]);
+    requestPermissions();
+  }, []);
 
   const canSubmit = useMemo(
     () => email.trim().length > 0 && password.length > 0 && !loading,
@@ -77,7 +113,6 @@ export default function LoginPage() {
       api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
       // Iniciar rastreamento nativo em background (Android)
-      await startTracking();
 
       router.replace("/(tabs)");
     } catch (error) {
