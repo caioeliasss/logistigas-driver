@@ -13,6 +13,7 @@ const veryIntensiveTask = async (taskDataArguments) => {
   // console.log("ForegroundService: background task started");
   // Example of an infinite loop task
   await new Promise(async (resolve) => {
+    await checkPermissions();
     while (BackgroundService.isRunning()) {
       // console.log("Runned in background");
       try {
@@ -47,6 +48,20 @@ const veryIntensiveTask = async (taskDataArguments) => {
     }
   });
   // console.log("ForegroundService: background task stopped");
+};
+
+const checkPermissions = async () => {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    console.log("Permission to access location was denied");
+    return;
+  }
+  const { status: backgroundStatus } =
+    await Location.requestBackgroundPermissionsAsync();
+  if (backgroundStatus !== "granted") {
+    console.log("Permission to access background location was denied");
+    return;
+  }
 };
 const options = {
   taskName: "Localizador",

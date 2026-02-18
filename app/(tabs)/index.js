@@ -41,6 +41,8 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, []);
 
+  // requestLocationPermission();
+
   const handleStatusChange = useCallback(
     async (pedidoId) => {
       try {
@@ -160,7 +162,7 @@ export default function HomeScreen() {
     const allowed = await requestPermissions();
     if (!allowed) return;
 
-    await foregroundService.start();
+    // await foregroundService.start();
 
     await refreshStatus();
   }, [refreshStatus, requestPermissions]);
@@ -327,7 +329,7 @@ export default function HomeScreen() {
       </View>
 
       <Text className="text-slate-400 text-sm mt-4 text-center">
-        Versão: 1.1.3
+        Versão: 1.1.4
       </Text>
     </View>
   );

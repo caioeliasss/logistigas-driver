@@ -23,9 +23,9 @@
       ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon-logistigas.png",
-        "backgroundImage": "./assets/images/icon-logistigas.png",
-        "monochromeImage": "./assets/images/icon-logistigas.png"
+        "foregroundImage": "./assets/images/icon-logistigas2.png",
+        "backgroundImage": "./assets/images/icon-logistigas2.png",
+        "monochromeImage": "./assets/images/icon-logistigas2.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -41,7 +41,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon-logistigas.png",
+          "image": "./assets/images/icon-logistigas2.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

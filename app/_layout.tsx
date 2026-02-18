@@ -3,7 +3,6 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import * as Location from "expo-location";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -16,17 +15,6 @@ import foregroundService from "./services/foregroundService";
 export const unstable_settings = {
   anchor: "(tabs)",
 };
-
-const requestLocationPermission = async () => {
-  const { status } = await Location.requestBackgroundPermissionsAsync();
-  if (status !== "granted") {
-    console.log("Permission to access location was denied");
-    return;
-  }
-  console.log("Location permission granted");
-};
-
-requestLocationPermission();
 
 export default function RootLayout() {
   // const colorScheme = useColorScheme();
