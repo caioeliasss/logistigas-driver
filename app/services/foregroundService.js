@@ -13,7 +13,7 @@ const veryIntensiveTask = async (taskDataArguments) => {
   // console.log("ForegroundService: background task started");
   // Example of an infinite loop task
   await new Promise(async (resolve) => {
-    await checkPermissions();
+    // await checkPermissions();
     while (BackgroundService.isRunning()) {
       // console.log("Runned in background");
       try {

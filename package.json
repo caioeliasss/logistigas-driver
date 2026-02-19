@@ -1,7 +1,7 @@
 {
   "name": "logistigas-driver",
   "main": "expo-router/entry",
-  "version": "1.0.4",
+  "version": "1.2.0",
   "scripts": {
     "start": "expo start -c",
     "reset-project": "node ./scripts/reset-project.js",
@@ -9,6 +9,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "prebuild": "expo prebuild",
+    "update": "eas update --auto --channel preview",
     "build:preview:local": "cd android && gradlew.bat assembleRelease",
     "build:dev:local": "cd android && gradlew.bat assembleDebug",
     "build:dev": "eas build --profile development --platform android",

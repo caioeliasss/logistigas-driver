@@ -41,6 +41,22 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, []);
 
+  React.useEffect(() => {
+    const checkPermissions = async () => {
+      const foreground = await Location.getForegroundPermissionsAsync();
+      const background = await Location.getBackgroundPermissionsAsync();
+      const notificationsAllowed = await requestNotificationPermission();
+
+      setPermissionsGranted(
+        foreground.status === "granted" &&
+          background.status === "granted" &&
+          notificationsAllowed,
+      );
+    };
+
+    checkPermissions();
+  }, []);
+
   // requestLocationPermission();
 
   const handleStatusChange = useCallback(
@@ -329,7 +345,7 @@ export default function HomeScreen() {
       </View>
 
       <Text className="text-slate-400 text-sm mt-4 text-center">
-        Versão: 1.1.4
+        Versão: {require("../../package.json").version}
       </Text>
     </View>
   );
