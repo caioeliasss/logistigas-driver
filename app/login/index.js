@@ -131,6 +131,7 @@ export default function LoginPage() {
     <KeyboardAvoidingView
       className="flex-1 bg-slate-900"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={80}
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
