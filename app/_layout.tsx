@@ -11,7 +11,6 @@ import "react-native-reanimated";
 import "../global.css";
 import { AuthRefresh } from "./services/AuthRefresh";
 import CheckUpdates from "./services/CheckUpdates";
-import foregroundService from "./services/foregroundService";
 export const unstable_settings = {
   anchor: "(tabs)",
 };
@@ -22,14 +21,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     const handleAppStateChange = async (nextState: string) => {
-      if (nextState === "active") {
-        await foregroundService.stop();
-        return;
-      }
-
-      if (nextState === "background") {
-        await foregroundService.start();
-      }
+      // if (nextState === "active") {
+      //   await foregroundService.stop();
+      //   return;
+      // }
+      // if (nextState === "background") {
+      //   await foregroundService.start();
+      // }
     };
 
     handleAppStateChange(AppState.currentState);

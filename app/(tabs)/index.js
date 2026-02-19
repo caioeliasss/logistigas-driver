@@ -99,7 +99,7 @@ export default function HomeScreen() {
   );
 
   const refreshStatus = useCallback(async () => {
-    setIsEnabled(foregroundService.isRunning());
+    // setIsEnabled(foregroundService.isRunning());
   }, []);
 
   useEffect(() => {
@@ -166,22 +166,32 @@ export default function HomeScreen() {
     return true;
   }, [requestNotificationPermission]);
 
-  const enableBackgroundLocation = useCallback(async () => {
-    if (Platform.OS === "web") {
-      Alert.alert(
-        "Não suportado",
-        "Localização em background não está disponível na web.",
-      );
-      return;
-    }
+  const enableBackgroundLocation = useCallback(
+    async (status) => {
+      if (Platform.OS === "web") {
+        Alert.alert(
+          "Não suportado",
+          "Localização em background não está disponível na web.",
+        );
+        return;
+      }
 
-    const allowed = await requestPermissions();
-    if (!allowed) return;
+      if (status === "ativar") {
+        await foregroundService.start();
+        setIsEnabled(true);
+      } else {
+        await foregroundService.stop();
+        setIsEnabled(false);
+      }
+      // const allowed = await requestPermissions();
+      // if (!allowed) return;
 
-    // await foregroundService.start();
+      // // await foregroundService.start();
 
-    await refreshStatus();
-  }, [refreshStatus, requestPermissions]);
+      // await refreshStatus();
+    },
+    [refreshStatus, requestPermissions],
+  );
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
@@ -197,9 +207,9 @@ export default function HomeScreen() {
   const handleToggle = useCallback(
     async (value) => {
       if (value) {
-        await enableBackgroundLocation();
+        await enableBackgroundLocation("ativar");
       } else {
-        await disableBackgroundLocation();
+        await enableBackgroundLocation("desativar");
       }
     },
     [disableBackgroundLocation, enableBackgroundLocation],
@@ -217,21 +227,18 @@ export default function HomeScreen() {
     <View className="flex-1 bg-slate-900 p-6 pt-24">
       <View className="bg-slate-950 rounded-2xl p-6 space-y-4">
         <Text className="text-white text-2xl font-bold">Bem-vindo</Text>
-        {permissionsGranted ? (
-          <Text className="text-slate-300 pt-4 pb-4">
-            Todas as permissões estão ativadas.
-          </Text>
+        {isEnabled ? (
+          <Text className="text-slate-300 pt-4 pb-4">Localizador ativado.</Text>
         ) : (
           <Text className="text-slate-300 pt-4 pb-4">
-            Ative todas as permissões para rastreamento.
+            Localizador desativado.
           </Text>
         )}
-        {permissionsGranted ? null : (
-          <Button
-            onPress={enableBackgroundLocation}
-            title="Ativar Permissões"
-          ></Button>
-        )}
+
+        <Button
+          onPress={() => handleToggle(!isEnabled)}
+          title={isEnabled ? "Desativar localizador" : "Ativar localizador"}
+        ></Button>
       </View>
       {/* <Text className="text-white text-2xl font-bold mb-2">
         Localizador de Motoristas
