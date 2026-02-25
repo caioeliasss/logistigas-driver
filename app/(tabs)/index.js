@@ -5,15 +5,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Button,
+  Image,
   PermissionsAndroid,
   Platform,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import api from "../services/api";
 import foregroundService from "../services/foregroundService";
 
 const AUTH_TOKEN_KEY = "auth-token";
+const BRAND_ORANGE = "#F97316";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -177,6 +180,9 @@ export default function HomeScreen() {
       }
 
       if (status === "ativar") {
+        //adicionar verificação de permissões antes de ativar
+        const allowed = await requestPermissions();
+        if (!allowed) return;
         await foregroundService.start();
         setIsEnabled(true);
       } else {
@@ -217,28 +223,41 @@ export default function HomeScreen() {
 
   if (refreshing) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-900">
-        <Text className="text-white text-lg">Atualizando...</Text>
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-orange-600 text-lg">Atualizando...</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-slate-900 p-6 pt-24">
-      <View className="bg-slate-950 rounded-2xl p-6 space-y-4">
-        <Text className="text-white text-2xl font-bold">Bem-vindo</Text>
+    <View className="flex-1 bg-white p-6 pt-24">
+      <View className="items-center pb-4">
+        <Image
+          source={require("../../assets/images/icon-logistigas2.png")}
+          resizeMode="contain"
+          style={{ width: 170, height: 80 }}
+        />
+      </View>
+
+      <View className="bg-white rounded-2xl p-6 space-y-4 border border-orange-200">
+        <Text className="text-orange-600 text-2xl font-bold">Bem-vindo</Text>
         {isEnabled ? (
-          <Text className="text-slate-300 pt-4 pb-4">Localizador ativado.</Text>
+          <Text className="text-slate-700 pt-4 pb-4">Localizador ativado.</Text>
         ) : (
-          <Text className="text-slate-300 pt-4 pb-4">
+          <Text className="text-slate-700 pt-4 pb-4">
             Localizador desativado.
           </Text>
         )}
 
-        <Button
+        <TouchableOpacity
           onPress={() => handleToggle(!isEnabled)}
-          title={isEnabled ? "Desativar localizador" : "Ativar localizador"}
-        ></Button>
+          className="rounded-xl py-3 items-center"
+          style={{ backgroundColor: BRAND_ORANGE }}
+        >
+          <Text className="text-white font-semibold">
+            {isEnabled ? "Desativar localizador" : "Ativar localizador"}
+          </Text>
+        </TouchableOpacity>
       </View>
       {/* <Text className="text-white text-2xl font-bold mb-2">
         Localizador de Motoristas
@@ -265,7 +284,7 @@ export default function HomeScreen() {
       </View> */}
 
       <View className="p-4">
-        <Text className="text-slate-300 mt-6 text-2xl">Proximos pedidos</Text>
+        <Text className="text-orange-600 mt-6 text-2xl">Proximos pedidos</Text>
         <View>
           {pedidos.length === 0 ? (
             <Text className="text-slate-500 mt-4">
@@ -275,17 +294,17 @@ export default function HomeScreen() {
           {pedidos.map((pedido) => (
             <View
               key={pedido._id}
-              className="bg-slate-950 rounded-2xl p-4 mt-4 border border-slate-800"
+              className="bg-white rounded-2xl p-4 mt-4 border border-orange-100"
             >
               <View className="flex-row items-center justify-between">
-                <Text className="text-white font-semibold text-base">
+                <Text className="text-slate-900 font-semibold text-base">
                   {pedido.distribuidora?.nome}
                 </Text>
                 <Text
                   className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     pedido.status === "pendente"
-                      ? "bg-amber-500/20 text-amber-300"
-                      : "bg-emerald-500/20 text-emerald-300"
+                      ? "bg-orange-100 text-orange-700"
+                      : "bg-orange-200 text-orange-800"
                   }`}
                 >
                   {pedido.status === "pendente"
@@ -301,7 +320,7 @@ export default function HomeScreen() {
                   <Text className="text-slate-500 text-xs">
                     Data de Carregamento
                   </Text>
-                  <Text className="text-slate-200 font-medium">
+                  <Text className="text-slate-800 font-medium">
                     {pedido.dataEntrega
                       ? pedido.dataEntrega
                           .split("T")[0]
@@ -311,22 +330,22 @@ export default function HomeScreen() {
                       : "N/A"}
                   </Text>
                   <Text className="text-slate-500 text-xs">Quantidade</Text>
-                  <Text className="text-slate-200 font-medium">
+                  <Text className="text-slate-800 font-medium">
                     {pedido.quantidade}
                   </Text>
                 </View>
                 <View className="items-end">
                   <Text className="text-slate-500 text-xs">Posto</Text>
-                  <Text className="text-slate-200 font-medium">
+                  <Text className="text-slate-800 font-medium">
                     {pedido.tanque?.posto?.nome || "N/A"}
                   </Text>
 
                   <Text className="text-slate-500 text-xs">Cidade</Text>
-                  <Text className="text-slate-200 font-medium">
+                  <Text className="text-slate-800 font-medium">
                     {pedido.tanque?.posto?.localizacao || "N/A"}
                   </Text>
                   <Text className="text-slate-500 text-xs">Combustivel</Text>
-                  <Text className="text-slate-200 font-medium">
+                  <Text className="text-slate-800 font-medium">
                     {pedido.tanque?.combustivel}
                   </Text>
                 </View>
@@ -334,6 +353,7 @@ export default function HomeScreen() {
 
               <View className="mt-4">
                 <Button
+                  color={BRAND_ORANGE}
                   title={
                     pedido.status === "pendente"
                       ? "Iniciar carregamento"
@@ -348,10 +368,14 @@ export default function HomeScreen() {
       </View>
 
       <View className="mt-6">
-        <Button title="Sair" onPress={() => handleLogout()} />
+        <Button
+          color={BRAND_ORANGE}
+          title="Sair"
+          onPress={() => handleLogout()}
+        />
       </View>
 
-      <Text className="text-slate-400 text-sm mt-4 text-center">
+      <Text className="text-orange-500 text-sm mt-4 text-center">
         Versão: {require("../../package.json").version}
       </Text>
     </View>

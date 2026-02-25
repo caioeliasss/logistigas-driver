@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   KeyboardAvoidingView,
   PermissionsAndroid,
   Platform,
@@ -18,6 +19,7 @@ import api from "../services/api";
 
 const AUTH_TOKEN_KEY = "auth-token";
 const AUTH_USER_KEY = "auth-user";
+const BRAND_ORANGE = "#F97316";
 
 const emailPattern = /^\S+@\S+\.\S+$/;
 
@@ -129,7 +131,7 @@ export default function LoginPage() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-slate-900"
+      className="flex-1 bg-white"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={80}
     >
@@ -138,17 +140,27 @@ export default function LoginPage() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="px-6">
-          <View className="bg-slate-950 rounded-2xl p-6 space-y-4">
+          <View className="bg-white rounded-2xl p-6 space-y-4 border border-orange-200">
+            <View className="items-center">
+              <Image
+                source={require("../../assets/images/icon-logistigas2.png")}
+                resizeMode="contain"
+                style={{ width: 170, height: 80 }}
+              />
+            </View>
+
             <View>
-              <Text className="text-white text-2xl font-bold">Bem-vindo</Text>
-              <Text className="text-slate-300">
+              <Text className="text-orange-600 text-2xl font-bold">
+                Bem-vindo
+              </Text>
+              <Text className="text-slate-600">
                 Acesse com seu email e senha.
               </Text>
             </View>
 
             <View className="space-y-3">
               <View>
-                <Text className="text-slate-200 mb-2">Email</Text>
+                <Text className="text-slate-800 mb-2">Email</Text>
                 <TextInput
                   value={email}
                   onChangeText={setEmail}
@@ -157,19 +169,19 @@ export default function LoginPage() {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
-                  className="bg-slate-900 text-white px-4 py-3 rounded-xl"
+                  className="bg-orange-50 text-slate-900 px-4 py-3 rounded-xl border border-orange-200"
                 />
               </View>
 
               <View>
-                <Text className="text-slate-200 mb-2">Senha</Text>
+                <Text className="text-slate-800 mb-2">Senha</Text>
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
                   placeholder="********"
                   placeholderTextColor="#64748B"
                   secureTextEntry
-                  className="bg-slate-900 text-white px-4 py-3 rounded-xl"
+                  className="bg-orange-50 text-slate-900 px-4 py-3 rounded-xl border border-orange-200"
                 />
               </View>
             </View>
@@ -178,8 +190,9 @@ export default function LoginPage() {
               onPress={handleLogin}
               disabled={!canSubmit}
               className={`rounded-xl py-3 mt-3 items-center ${
-                canSubmit ? "bg-blue-600" : "bg-slate-700"
+                canSubmit ? "bg-orange-500" : "bg-orange-200"
               }`}
+              style={canSubmit ? { backgroundColor: BRAND_ORANGE } : undefined}
             >
               {loading ? (
                 <ActivityIndicator color="#FFFFFF" />
