@@ -60,13 +60,15 @@
           "isAndroidBackgroundLocationEnabled": true
         }
       ],
-      "expo-asset",
-      {
-        "assets": [
-          "./assets/images/icon-logistigas2.png",
-          "./assets/images/icon-logistigas.png"
-        ]
-      }
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/images/icon-logistigas2.png",
+            "./assets/images/icon-logistigas.png"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
