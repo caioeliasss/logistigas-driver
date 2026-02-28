@@ -12,9 +12,11 @@
     "prebuild": "expo prebuild",
     "update": "eas update --auto --channel preview",
     "build:preview:local": "cd android && gradlew.bat assembleRelease",
+    "build:preview:local:prebuild": "expo prebuild --platform android && cd android && gradlew.bat assembleRelease",
     "build:dev:local": "cd android && gradlew.bat assembleDebug",
     "build:dev": "eas build --profile development --platform android",
-    "build:preview": "eas build --profile preview --platform android"
+    "build:preview": "eas build --profile preview --platform android",
+    "deploy:git": "gh release upload Production app/build/outputs/apk/release/app-release.apk --clobber"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

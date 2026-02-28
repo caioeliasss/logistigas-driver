@@ -143,7 +143,7 @@ export default function LoginPage() {
           <View className="bg-white rounded-2xl p-6 space-y-4 border border-orange-200">
             <View className="items-center">
               <Image
-                source={require("../../assets/images/icon-logistigas2.png")}
+                source={require("../../assets/images/icon_logistigas2.png")}
                 resizeMode="contain"
                 style={{ width: 170, height: 80 }}
               />

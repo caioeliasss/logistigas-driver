@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Asset } from "expo-asset";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -19,9 +18,6 @@ import foregroundService from "../services/foregroundService";
 
 const AUTH_TOKEN_KEY = "auth-token";
 const BRAND_ORANGE = "#F97316";
-const LOGO_URI = Asset.fromModule(
-  require("../../assets/images/icon-logistigas2.png"),
-).uri;
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -205,7 +201,7 @@ export default function HomeScreen() {
   );
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+    await AsyncStorage.multiRemove(["auth-token", "refresh-token"]);
     router.replace("/login");
   };
 
@@ -238,7 +234,7 @@ export default function HomeScreen() {
     <ScrollView className="flex-1 bg-white p-6 pt-24">
       <View className="items-center pb-4">
         <Image
-          source={require("../../assets/images/icon-logistigas2.png")}
+          source={require("../../assets/images/icon_logistigas2.png")}
           resizeMode="contain"
           style={{ width: 170, height: 80 }}
         />
@@ -372,17 +368,31 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <View className="mt-6">
+      {/* <View className="mt-6">
         <Button
           color={BRAND_ORANGE}
           title="Sair"
           onPress={() => handleLogout()}
         />
-      </View>
+      </View> */}
 
-      <Text className="text-orange-500 text-sm mt-4 text-center">
-        Versão: {require("../../package.json").version}
-      </Text>
+      <View className="flex-1 items-center justify-center mt-6">
+        <Text className="text-orange-500 text-sm text-center">
+          Versão: {require("../../package.json").version}
+        </Text>
+        <TouchableOpacity
+          onPress={() => handleLogout()}
+          className="mt-2 rounded-xl border px-5 py-2"
+          style={{ borderColor: BRAND_ORANGE }}
+        >
+          <Text
+            className="text-sm font-semibold underline"
+            style={{ color: BRAND_ORANGE }}
+          >
+            Sair
+          </Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }

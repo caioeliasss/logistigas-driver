@@ -2,9 +2,9 @@
   "expo": {
     "name": "Logistigas Motorista",
     "slug": "logistigas-driver",
-    "version": "1.0.0",
+    "version": "1.2.4",
     "orientation": "portrait",
-    "icon": "./assets/images/icon-logistigas2.png",
+    "icon": "./assets/images/icon_logistigas2.png",
     "scheme": "logistigasdriver",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -24,9 +24,9 @@
       ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon-logistigas2.png",
-        "backgroundImage": "./assets/images/icon-logistigas2.png",
-        "monochromeImage": "./assets/images/icon-logistigas2.png"
+        "foregroundImage": "./assets/images/icon_logistigas2.png",
+        "backgroundImage": "./assets/images/icon_logistigas2.png",
+        "monochromeImage": "./assets/images/icon_logistigas2.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -34,7 +34,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/icon-logistigas2.png",
+      "favicon": "./assets/images/icon_logistigas2.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -42,7 +42,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon-logistigas2.png",
+          "image": "./assets/images/icon_logistigas2.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -64,8 +64,8 @@
         "expo-asset",
         {
           "assets": [
-            "./assets/images/icon-logistigas2.png",
-            "./assets/images/icon-logistigas.png"
+            "./assets/images/icon_logistigas2.png",
+            "./assets/images/icon_logistigas.png"
           ]
         }
       ]
