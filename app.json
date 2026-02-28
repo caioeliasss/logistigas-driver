@@ -19,6 +19,7 @@
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_LOCATION",
         "android.permission.POST_NOTIFICATIONS",
+        "android.permission.REQUEST_INSTALL_PACKAGES",
         "android.permission.WAKE_LOCK"
       ],
       "adaptiveIcon": {

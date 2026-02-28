@@ -8,6 +8,7 @@ import {
   Image,
   PermissionsAndroid,
   Platform,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -230,7 +231,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white p-6 pt-24">
+    <ScrollView className="flex-1 bg-white p-6 pt-24">
       <View className="items-center pb-4">
         <Image
           source={require("../../assets/images/icon-logistigas2.png")}
@@ -378,6 +379,6 @@ export default function HomeScreen() {
       <Text className="text-orange-500 text-sm mt-4 text-center">
         Versão: {require("../../package.json").version}
       </Text>
-    </View>
+    </ScrollView>
   );
 }
