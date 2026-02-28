@@ -1,10 +1,24 @@
 import * as FileSystem from "expo-file-system/legacy";
 import * as IntentLauncher from "expo-intent-launcher";
-import { useEffect } from "react";
-import { Alert, Linking, Platform } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Colors } from "../../constants/theme";
 import api from "./api";
 
 const currentVersion = require("../../package.json").version;
+const BRAND_ORANGE = Colors.light.tint;
+const BORDER_ORANGE = "#FDBA74";
+const SURFACE_ORANGE = "#FFF7ED";
 
 function compareVersions(first = "0", second = "0") {
   const firstParts = String(first)
@@ -53,6 +67,36 @@ async function startAndroidInstall(downloadUrl) {
 }
 
 export default function CheckUpdates() {
+  const [updateInfo, setUpdateInfo] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleCancelUpdate = useCallback(() => {
+    if (isUpdating) return;
+    setUpdateInfo(null);
+  }, [isUpdating]);
+
+  const handleStartUpdate = useCallback(async () => {
+    if (!updateInfo?.downloadUrl || isUpdating) return;
+
+    setIsUpdating(true);
+    try {
+      if (Platform.OS === "android") {
+        await startAndroidInstall(updateInfo.downloadUrl);
+      } else {
+        await Linking.openURL(updateInfo.downloadUrl);
+      }
+      setUpdateInfo(null);
+    } catch (installError) {
+      console.error("Erro ao instalar atualização:", installError);
+      Alert.alert(
+        "Erro na atualização",
+        "Não foi possível iniciar a atualização automática. Tente novamente mais tarde.",
+      );
+    } finally {
+      setIsUpdating(false);
+    }
+  }, [isUpdating, updateInfo]);
+
   useEffect(() => {
     const checkForUpdates = async () => {
       try {
@@ -69,34 +113,11 @@ export default function CheckUpdates() {
           compareVersions(latestVersion, currentVersion) > 0;
         if (!hasNewVersion) return;
 
-        Alert.alert(
-          "Nova versão disponível",
-          `Versão atual: ${currentVersion}\nNova versão: ${latestVersion}\n\n${releaseNotes}`,
-          [
-            { text: "Depois", style: "cancel" },
-            {
-              text: "Atualizar",
-              onPress: async () => {
-                try {
-                  if (Platform.OS === "android") {
-                    await startAndroidInstall(downloadUrl);
-                    return;
-                  }
-
-                  if (downloadUrl) {
-                    await Linking.openURL(downloadUrl);
-                  }
-                } catch (installError) {
-                  console.error("Erro ao instalar atualização:", installError);
-                  Alert.alert(
-                    "Erro na atualização",
-                    "Não foi possível iniciar a atualização automática. Tente novamente mais tarde.",
-                  );
-                }
-              },
-            },
-          ],
-        );
+        setUpdateInfo({
+          latestVersion,
+          downloadUrl,
+          releaseNotes,
+        });
       } catch (error) {
         if (error?.response?.status === 404) {
           return;
@@ -108,5 +129,85 @@ export default function CheckUpdates() {
     checkForUpdates();
   }, []);
 
-  return null;
+  return (
+    <Modal
+      transparent
+      visible={Boolean(updateInfo)}
+      animationType="fade"
+      onRequestClose={handleCancelUpdate}
+    >
+      <View className="flex-1 items-center justify-center bg-black/45 px-5">
+        <View
+          className="w-full rounded-2xl border p-5"
+          style={{
+            backgroundColor: "white",
+            borderColor: BORDER_ORANGE,
+            maxWidth: 420,
+          }}
+        >
+          <Text className="text-lg font-bold" style={{ color: BRAND_ORANGE }}>
+            Nova versão disponível
+          </Text>
+
+          <View
+            className="mt-3 rounded-xl border p-3"
+            style={{ backgroundColor: SURFACE_ORANGE, borderColor: "#FED7AA" }}
+          >
+            <Text style={{ color: Colors.light.text }}>
+              Versão atual: {currentVersion}
+            </Text>
+            <Text style={{ color: Colors.light.text }}>
+              Nova versão: {updateInfo?.latestVersion}
+            </Text>
+          </View>
+
+          <Text
+            className="mt-4 mb-2 font-semibold"
+            style={{ color: Colors.light.text }}
+          >
+            O que mudou
+          </Text>
+
+          <ScrollView className="max-h-36" showsVerticalScrollIndicator={false}>
+            <Text className="text-sm leading-5" style={{ color: "#475569" }}>
+              {updateInfo?.releaseNotes}
+            </Text>
+          </ScrollView>
+
+          <View className="mt-5 flex-row justify-end gap-3">
+            <TouchableOpacity
+              onPress={handleCancelUpdate}
+              disabled={isUpdating}
+              className="rounded-xl border px-4 py-2"
+              style={{ borderColor: "#CBD5E1" }}
+            >
+              <Text style={{ color: "#334155", fontWeight: "600" }}>
+                Depois
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleStartUpdate}
+              disabled={isUpdating || !updateInfo?.downloadUrl}
+              className="min-w-[110px] items-center rounded-xl px-4 py-2"
+              style={{
+                backgroundColor:
+                  isUpdating || !updateInfo?.downloadUrl
+                    ? "#FDBA74"
+                    : BRAND_ORANGE,
+              }}
+            >
+              {isUpdating ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <Text style={{ color: "#FFFFFF", fontWeight: "700" }}>
+                  Atualizar
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
 }
