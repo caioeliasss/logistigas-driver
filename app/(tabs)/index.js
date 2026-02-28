@@ -238,7 +238,7 @@ export default function HomeScreen() {
     <ScrollView className="flex-1 bg-white p-6 pt-24">
       <View className="items-center pb-4">
         <Image
-          source={{ uri: LOGO_URI }}
+          source={require("../../assets/images/icon-logistigas2.png")}
           resizeMode="contain"
           style={{ width: 170, height: 80 }}
         />
