@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Asset } from "expo-asset";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -18,6 +19,9 @@ import foregroundService from "../services/foregroundService";
 
 const AUTH_TOKEN_KEY = "auth-token";
 const BRAND_ORANGE = "#F97316";
+const LOGO_URI = Asset.fromModule(
+  require("../../assets/images/icon-logistigas2.png"),
+).uri;
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -234,7 +238,7 @@ export default function HomeScreen() {
     <ScrollView className="flex-1 bg-white p-6 pt-24">
       <View className="items-center pb-4">
         <Image
-          source={require("../../assets/images/icon-logistigas2.png")}
+          source={{ uri: LOGO_URI }}
           resizeMode="contain"
           style={{ width: 170, height: 80 }}
         />
