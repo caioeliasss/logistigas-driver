@@ -234,7 +234,7 @@ export default function HomeScreen() {
     <ScrollView className="flex-1 bg-white p-6 pt-24">
       <View className="items-center pb-4">
         <Image
-          source={require("../../assets/images/icon_logistigas.png")}
+          source={require("../../assets/images/icon_logistigas2.png")}
           resizeMode="contain"
           style={{ width: 170, height: 80 }}
         />
@@ -376,13 +376,13 @@ export default function HomeScreen() {
         />
       </View> */}
 
-      <View className="flex col-2 items-center justify-center mt-6">
+      <View className="flex items-center justify-center gap-1 mt-6">
         <Text className="text-orange-500 text-sm text-center">
           Versão: {require("../../package.json").version}
         </Text>
         <TouchableOpacity
           onPress={() => handleLogout()}
-          className="mt-2 rounded-xl px-5 py-2"
+          className="rounded-xl px-5 py-2"
           style={{ borderColor: BRAND_ORANGE }}
         >
           <Text
